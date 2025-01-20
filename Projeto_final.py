@@ -3,7 +3,7 @@ from mysql.connector import Error
 from datetime import datetime
 
 def conectar_bd():
-    """Conecta ao banco de dados MySQL e retorna a conexão."""
+
     try:
         conexao = mysql.connector.connect(
             host="localhost",
@@ -18,7 +18,7 @@ def conectar_bd():
         return None
 
 def criar_tabelas(cursor):
-    """Cria as tabelas necessárias no banco de dados."""
+   
     tabelas = {
         "produtos": (
             "CREATE TABLE IF NOT EXISTS produtos ("
@@ -61,7 +61,7 @@ def criar_tabelas(cursor):
             print(f"Erro ao criar tabela {nome}: {erro}")
 
 def adicionar_produto(cursor):
-    """Adiciona um novo produto ao banco de dados."""
+   
     try:
         nome = input("Nome do produto: ")
         descricao = input("Descrição: ")
@@ -95,7 +95,7 @@ def adicionar_produto(cursor):
         print(f"Erro ao adicionar produto: {erro}")
 
 def listar_produtos(cursor):
-    """Lista todos os produtos cadastrados no banco de dados."""
+   
     try:
         cursor.execute("SELECT * FROM produtos")
         produtos = cursor.fetchall()
@@ -107,12 +107,12 @@ def listar_produtos(cursor):
         print("ID | Nome | Descrição | Preço | Estoque | Categoria")
         print("-" * 80)
         for produto in produtos:
-            print(f"{produto[0]} | {produto[1]} | {produto[2][:30]}... | R${produto[3]:.2f} | {produto[4]} | {produto[5]}")
+            print(f"{produto[0]} | {produto[1]} | {produto[2][:30]}... | €{produto[3]:.2f} | {produto[4]} | {produto[5]}")
     except Error as erro:
         print(f"Erro ao listar produtos: {erro}")
 
 def registrar_cliente(cursor):
-    """Registra um novo cliente no banco de dados."""
+  
     try:
         nome = input("Nome do cliente: ")
         email = input("E-mail: ")
@@ -128,7 +128,7 @@ def registrar_cliente(cursor):
         print(f"Erro ao registrar cliente: {erro}")
 
 def listar_clientes(cursor):
-    """Lista todos os clientes cadastrados no banco de dados."""
+   
     try:
         cursor.execute("SELECT * FROM clientes")
         clientes = cursor.fetchall()
@@ -145,7 +145,7 @@ def listar_clientes(cursor):
         print(f"Erro ao listar clientes: {erro}")
 
 def realizar_pedido(cursor, conexao):
-    """Realiza um novo pedido no banco de dados."""
+   
     try:
         listar_clientes(cursor)
         cliente_id = int(input("ID do cliente: "))
@@ -186,7 +186,7 @@ def realizar_pedido(cursor, conexao):
                     (quantidade, produto_id)
                 )
                 conexao.commit()
-                print(f"Pedido realizado com sucesso! Total: R${total:.2f}")
+                print(f"Pedido realizado com sucesso! Total: €{total:.2f}")
             except Error as erro:
                 conexao.rollback()
                 print(f"Erro ao realizar pedido: {erro}")
@@ -198,7 +198,7 @@ def realizar_pedido(cursor, conexao):
         print(f"Erro ao processar pedido: {erro}")
 
 def listar_pedidos(cursor):
-    """Lista todos os pedidos realizados no banco de dados."""
+   
     try:
         cursor.execute("""
             SELECT p.id, c.nome as cliente, pr.nome as produto, 
@@ -217,12 +217,12 @@ def listar_pedidos(cursor):
         print("ID | Cliente | Produto | Quantidade | Total | Data")
         print("-" * 90)
         for pedido in pedidos:
-            print(f"{pedido[0]} | {pedido[1]} | {pedido[2]} | {pedido[3]} | R${pedido[4]:.2f} | {pedido[5]}")
+            print(f"{pedido[0]} | {pedido[1]} | {pedido[2]} | {pedido[3]} | €{pedido[4]:.2f} | {pedido[5]}")
     except Error as erro:
         print(f"Erro ao listar pedidos: {erro}")
 
 def menu():
-    """Exibe o menu principal e processa as opções do usuário."""
+
     conexao = conectar_bd()
     if not conexao:
         return
