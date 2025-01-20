@@ -201,25 +201,33 @@ def listar_pedidos(cursor):
    
     try:
         cursor.execute("""
-            SELECT p.id, c.nome as cliente, pr.nome as produto, 
-                   p.quantidade, p.total, p.data_pedido
+            SELECT p.id, 
+                   COALESCE(c.nome, 'Cliente não encontrado') AS cliente, 
+                   COALESCE(pr.nome, 'Produto não encontrado') AS produto, 
+                   p.quantidade, 
+                   p.total, 
+                   p.data_pedido
             FROM pedidos p
-            JOIN clientes c ON p.cliente_id = c.id
-            JOIN produtos pr ON p.produto_id = pr.id
+            LEFT JOIN clientes c ON p.cliente_id = c.id
+            LEFT JOIN produtos pr ON p.produto_id = pr.id
             ORDER BY p.data_pedido DESC
         """)
         pedidos = cursor.fetchall()
+
         if not pedidos:
             print("Nenhum pedido registrado.")
             return
-        
+
         print("\nHistórico de Pedidos:")
-        print("ID | Cliente | Produto | Quantidade | Total | Data")
+        print("ID | Cliente           | Produto            | Quantidade | Total (€) | Data")
         print("-" * 90)
+
         for pedido in pedidos:
-            print(f"{pedido[0]} | {pedido[1]} | {pedido[2]} | {pedido[3]} | €{pedido[4]:.2f} | {pedido[5]}")
+            data_formatada = pedido[5].strftime("%d/%m/%Y %H:%M:%S") if pedido[5] else "Data desconhecida"
+            print(f"{pedido[0]} | {pedido[1]:<17} | {pedido[2]:<18} | {pedido[3]:<10} | €{pedido[4]:<8.2f} | {data_formatada}")
     except Error as erro:
         print(f"Erro ao listar pedidos: {erro}")
+
 
 def menu():
 
